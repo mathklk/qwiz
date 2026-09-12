@@ -1,7 +1,7 @@
 #ifndef MODERATORWINDOW_H
 #define MODERATORWINDOW_H
 
-#include "domain/game.h"
+#include "model/game.h"
 #include "playerdialog.h"
 
 #include <QMainWindow>
@@ -17,8 +17,11 @@ class ModeratorWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    ModeratorWindow(Game* game, QWidget* parent = nullptr);
+    ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget* parent = nullptr);
     ~ModeratorWindow();
+
+private:
+    void newGameClicked();
 
 private:
     Ui::ModeratorWindow* ui;

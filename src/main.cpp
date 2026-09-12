@@ -1,15 +1,41 @@
 #include "moderatorwindow.h"
+#include "playerdialog.h"
+#include "viewerwindow.h"
+
+#include "model/game.h"
+#include "buzzer/keyboardbuzzer.h"
 
 #include <QApplication>
-
-#include "domain/game.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    // For QSettings in RememberingFileDialog
+    a.setApplicationName("qwiz");
+    a.setOrganizationName("qwiz");
+    a.setOrganizationDomain("qwiz");
 
     Game game;
-    ModeratorWindow w(&game);
-    w.show();
+    PlayerDialog playerDialog(&game);
+    ViewerWindow viewerWindow(&game);
+    ModeratorWindow moderatorWindow(&game, &playerDialog);
+
+    QList<QWidget*> windows;
+    windows << &playerDialog;
+    windows << &moderatorWindow;
+    QList<QList<QKeySequence>> sequences = {
+        {Qt::Key_F1,  Qt::Key_F2,  Qt::Key_F3,  Qt::Key_F4 },
+        {Qt::Key_F21, Qt::Key_F22, Qt::Key_F23, Qt::Key_F24}
+    };
+    for (QWidget* widget : windows) {
+        for (QList<QKeySequence> const& sequence : sequences) {
+            KeyboardBuzzer* buzzer = new KeyboardBuzzer(widget, sequence);
+            QObject::connect(buzzer, &BuzzerBase::buzz, &playerDialog, &PlayerDialog::triggerBuzzerVisualization);
+            QObject::connect(buzzer, &BuzzerBase::buzz, &game, &Game::buzz);
+        }
+    }
+
+    moderatorWindow.show();
+    viewerWindow.show();
     return a.exec();
 }

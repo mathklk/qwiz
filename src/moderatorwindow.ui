@@ -27,6 +27,7 @@
     <property name="title">
      <string>Game</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionPlayers"/>
    </widget>
    <addaction name="menuGame"/>
@@ -35,6 +36,17 @@
   <action name="actionPlayers">
    <property name="text">
     <string>Players...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+,</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New Game...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>
