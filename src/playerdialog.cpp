@@ -25,7 +25,7 @@ PlayerDialog::PlayerDialog(Game* game, QWidget *parent):
         setPlayerBoxBackgroundColor(i, player->color());
         _playerBoxes[i].lineEdit->setText(player->name());
         _playerBoxes[i].label->setText(QString::number(game->players()[i]->points()));
-        connect(_playerBoxes[i].lineEdit, &QLineEdit::textEdited, this, [&player](QString const& newName){
+        connect(_playerBoxes[i].lineEdit, &QLineEdit::textEdited, this, [player](QString const& newName){
             player->setName(newName);
         });
         connect(_playerBoxes[i].button, &QPushButton::clicked, this, [this, i, player](){

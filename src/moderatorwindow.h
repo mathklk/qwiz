@@ -22,12 +22,14 @@ public:
 
 private:
     void newGameClicked();
+    void playerChanged(int);
 
 private:
     Ui::ModeratorWindow* ui;
     PlayerDialog* _playerDialog;
-
     Game* _game;
+
+    QList<QLabel*> _statusBarLabels;
 
 };
 #endif // MODERATORWINDOW_H

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="2">
@@ -170,6 +170,9 @@
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
      </property>
      <property name="cornerButtonEnabled">
       <bool>false</bool>

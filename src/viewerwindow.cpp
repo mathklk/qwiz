@@ -26,6 +26,7 @@ ViewerWindow::ViewerWindow(Game* game, QWidget *parent):
     ui->raster->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->raster->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->raster->setFocusPolicy(Qt::NoFocus);
+    ui->raster->setFrameStyle(QFrame::NoFrame);
 }
 
 ViewerWindow::~ViewerWindow()
@@ -34,6 +35,8 @@ ViewerWindow::~ViewerWindow()
 }
 
 void ViewerWindow::updateGame() {
+    setWindowTitle(_game->board().title());
+
     for (int i = 0; i < Game::nPlayers; ++i) {
         updatePlayerBox(i);
     }
@@ -67,6 +70,7 @@ void ViewerWindow::updateGame() {
 }
 
 void ViewerWindow::updatePlayerBox(int i) {
+    qDebug() << "ViewerWindow::updatePlayerBox(" << i << ")";
     PlayerBox& box = _playerBoxes[i];
     _playerBoxes[i].frame->setStyleSheet(
         QString("QFrame { background-color: %1; }").arg(_game->players()[i]->color().name())
