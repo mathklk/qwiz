@@ -15,16 +15,30 @@ int Board::maxNumberOfQuestionsPerCategory() const {
     return count;
 }
 
-Question* Board::at(QPair<int, int> const& ciqi) {
-    // category index, question index
-    auto const& [ci, qi] = ciqi;
+//Question* Board::at(QPair<int, int> const& ciqi) {
+//    return at(ciqi.first, ciqi.second);
+//}
+
+Question* Board::at(int ci, int qi) {
     if (ci > size()) {
-        qWarning() << "Board::at called with ci=" << ci;
+        qCritical() << "Board::at called with ci=" << ci;
         return nullptr;
     }
     if (qi > (*this)[ci].size()) {
-        qWarning() << "Board::at called with qi=" << qi;
+        qCritical() << "Board::at called with qi=" << qi;
         return nullptr;
     }
     return &(*this)[ci][qi];
+}
+
+Question* Board::activeQuestion() {
+    for (Category& category : *this) {
+        for (Question& question : category) {
+            if (question.state() == Question::State::active) {
+                return &question;
+            }
+        }
+    }
+    qCritical() << "Board::activeQuestion called but no active question found";
+    return nullptr;
 }

@@ -14,11 +14,15 @@ public:
     QString const& name() const { return _name; }
     void setName(QString const name) { _name = name; emit changed(); }
 
-    QColor const& color() const { return _color; }
+    QColor const color() const { return _color; }
     void setColor(QColor const color) { _color = color; emit changed(); }
 
     qint64 points() const { return _points; }
     void setPoints(qint64 const points)  { _points = points; emit changed(); }
+
+    bool isActive() const { return _isActive; }
+    void setIsActive(bool const active) { _isActive = active; emit changed(); }
+
 
 signals:
     void changed();
@@ -27,6 +31,7 @@ private:
     QString _name;
     QColor _color;
     qint64 _points;
+    bool _isActive;
 };
 
 #endif // PLAYER_H

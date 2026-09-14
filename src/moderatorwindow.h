@@ -20,9 +20,22 @@ public:
     ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget* parent = nullptr);
     ~ModeratorWindow();
 
+signals:
+    void closed();
+    void signalIncreaseFont();
+    void signalDecreaseFont();
+    void signalAlwaysShowCategoriesChanged(bool);
+
+protected:
+    void closeEvent(QCloseEvent* ev) override {
+        QMainWindow::closeEvent(ev);
+        emit closed();
+    }
+
 private:
     void newGameClicked();
     void playerChanged(int);
+    void updateBoard(Board const&);
 
 private:
     Ui::ModeratorWindow* ui;

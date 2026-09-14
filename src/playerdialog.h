@@ -32,9 +32,10 @@ private:
 
     struct PlayerBox {
         QFrame* frame;
-        QLineEdit* lineEdit;
-        QLabel* label;
-        QPushButton* button;
+        QLineEdit* lineEditName;
+        QLabel* labelPoints;
+        QPushButton* buttonColor;
+        QPushButton* buttonActive;
     };
     QList<PlayerBox> _playerBoxes;
 };

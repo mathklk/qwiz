@@ -19,6 +19,27 @@ int main(int argc, char *argv[])
     PlayerDialog playerDialog(&game);
     ViewerWindow viewerWindow(&game);
     ModeratorWindow moderatorWindow(&game, &playerDialog);
+    QObject::connect(&moderatorWindow, &ModeratorWindow::closed, [&playerDialog, &viewerWindow](){
+        playerDialog.close();
+        viewerWindow.close();
+    });
+    QObject::connect(&viewerWindow, &ViewerWindow::closed, [&playerDialog, &moderatorWindow](){
+        playerDialog.close();
+        moderatorWindow.close();
+    });
+    QObject::connect(&moderatorWindow, &ModeratorWindow::signalIncreaseFont, [&viewerWindow](){
+        QFont font = viewerWindow.font();
+        font.setPointSize(font.pointSize() + 1);
+        viewerWindow.setFont(font);
+        viewerWindow.update();
+    });
+    QObject::connect(&moderatorWindow, &ModeratorWindow::signalDecreaseFont, [&viewerWindow](){
+        QFont font = viewerWindow.font();
+        font.setPointSize(font.pointSize() - 1);
+        viewerWindow.setFont(font);
+        viewerWindow.update();
+    });
+    QObject::connect(&moderatorWindow, &ModeratorWindow::signalAlwaysShowCategoriesChanged, &viewerWindow, &ViewerWindow::setAlwaysShowCategories);
 
     QList<QWidget*> windows;
     windows << &playerDialog;
