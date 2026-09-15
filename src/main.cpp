@@ -41,16 +41,17 @@ int main(int argc, char *argv[])
     });
     QObject::connect(&moderatorWindow, &ModeratorWindow::signalAlwaysShowCategoriesChanged, &viewerWindow, &ViewerWindow::setAlwaysShowCategories);
 
-    QList<QWidget*> windows;
-    windows << &playerDialog;
-    windows << &moderatorWindow;
+    QList<QWidget*> windowsThatListenToKeyboardBuzzers;
+    windowsThatListenToKeyboardBuzzers<< &playerDialog;
+    windowsThatListenToKeyboardBuzzers<< &moderatorWindow;
+    windowsThatListenToKeyboardBuzzers<< &viewerWindow;
     QList<QList<QKeySequence>> sequences = {
         {Qt::Key_F1,  Qt::Key_F2,  Qt::Key_F3,  Qt::Key_F4 },
         {Qt::Key_F21, Qt::Key_F22, Qt::Key_F23, Qt::Key_F24}
     };
-    for (QWidget* widget : windows) {
+    for (QWidget* window : windowsThatListenToKeyboardBuzzers) {
         for (QList<QKeySequence> const& sequence : sequences) {
-            KeyboardBuzzer* buzzer = new KeyboardBuzzer(widget, sequence);
+            KeyboardBuzzer* buzzer = new KeyboardBuzzer(window, sequence);
             QObject::connect(buzzer, &BuzzerBase::buzz, &playerDialog, &PlayerDialog::triggerBuzzerVisualization);
             QObject::connect(buzzer, &BuzzerBase::buzz, &game, &Game::buzz);
         }

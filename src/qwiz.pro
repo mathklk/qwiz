@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,6 +40,9 @@ FORMS += \
     moderatorwindow.ui \
     playerdialog.ui \
     viewerwindow.ui
+
+RESOURCES += \
+    res.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

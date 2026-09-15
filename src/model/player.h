@@ -23,6 +23,9 @@ public:
     bool isActive() const { return _isActive; }
     void setIsActive(bool const active) { _isActive = active; emit changed(); }
 
+    bool hasAttempted() const { return _hasAttempted; }
+    void setHasAttempted(bool const attempted) { _hasAttempted = attempted; emit changed(); }
+
 
 signals:
     void changed();
@@ -32,6 +35,7 @@ private:
     QColor _color;
     qint64 _points;
     bool _isActive;
+    bool _hasAttempted;
 };
 
 #endif // PLAYER_H

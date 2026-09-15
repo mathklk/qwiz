@@ -14,22 +14,13 @@ ViewerWindow::ViewerWindow(Game* game, QWidget *parent):
 
     for (int i = 0; i < Game::nPlayers; ++i) {
         updatePlayerBox(i);
-        connect(game->players()[i], &Player::changed, this, [this, i](){ updatePlayerBox(i); });
+        connect(game->players()[i], &Player::changed, this, [this, i](){
+            updatePlayerBox(i);
+            updateGame(); // Box colors may need to be updated
+        });
     }
 
     connect(_game, &Game::changed, this, &ViewerWindow::updateGame);
-
-    /*
-    for (QTableWidget* table: {ui->raster, ui->categories}) {
-        table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        table->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        table->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        table->setFocusPolicy(Qt::NoFocus);
-        table->setFrameStyle(QFrame::NoFrame);
-        table->sizeHint()
-    }
-    */
-
     updateGame();
 }
 
@@ -46,8 +37,6 @@ void ViewerWindow::updateGame() {
     }
 
     // Clear Raster
-
-
     QLayout* oldLayout = ui->raster->layout();
     if (oldLayout != nullptr) {
     QLayoutItem* item;
@@ -64,7 +53,8 @@ void ViewerWindow::updateGame() {
     // Reset Layout size
 
     Board const& board = _game->board();
-    if (_game->state() == Game::State::idle or _alwaysShowCategories) {
+    Game::State const& state = _game->state();
+    if (state == Game::State::idle or state == Game::State::finished or _alwaysShowCategories) {
         // Draw Board
         if (board.empty()) {
             rasterLayout->addWidget(new QLabel());
@@ -82,22 +72,28 @@ void ViewerWindow::updateGame() {
             rasterLayout->addWidget(categoryNameLabel, 0, iColumn);
 
             // Add Question Boxes
-            if (_game->state() != Game::State::idle) {
+            if (not (state == Game::State::idle or state == Game::State::finished)) {
                 continue;
             }
             for (int iRow = 0; iRow < category.count(); ++iRow) {
                 Question const& question = category[iRow];
                 auto questionLabel = new QLabel("<h2>" + QString::number(question.points()) + "</h2>");
                 questionLabel->setAlignment(Qt::AlignCenter);
+                if (state == Game::State::idle and question.state() == Question::State::finished) {
+                    questionLabel->setText("");
+                }
                 rasterLayout->addWidget(questionLabel, 1 + iRow, iColumn);
+                if (state == Game::State::finished and question.solver() != nullptr) {
+                    questionLabel->setStyleSheet(QString("QLabel { background-color: %1; }").arg(question.solver()->color().name()));
+                }
             }
         }
         for (int iRow = 1; iRow < board.maxNumberOfQuestionsPerCategory() + 1; ++iRow) {
             rasterLayout->setRowStretch(iRow, 1);
         }
     }
-    if (_game->state() == Game::State::activeQuestion) {
-        Question const*const activeQuestion = _game->board().activeQuestion();
+    if (state == Game::State::activeQuestion or state == Game::State::judging or state == Game::State::answered) {
+        Question const*const activeQuestion = _game->activeQuestion();
         QLabel *const questionLabel = new QLabel(activeQuestion ? "<h1>" + activeQuestion->text() + "</h1>" : "");
         questionLabel->setAlignment(Qt::AlignCenter);
         questionLabel->setWordWrap(true);
@@ -115,16 +111,16 @@ void ViewerWindow::updateGame() {
 void ViewerWindow::updatePlayerBox(int i) {
     PlayerBox& box = _playerBoxes[i];
     Player const*const player = _game->players().at(i);
+
+    bool const isFailer = _game->activeQuestion() != nullptr and _game->activeQuestion()->failers().contains(player);
     QString boxStyleSheet;
-    if (player->isActive()) {
-        boxStyleSheet = QString("QFrame { background-color: %1; }").arg(player->color().name());
-    } else {
-        // Frame not filled, but border colored
-        boxStyleSheet = QString("QFrame { background-color: transparent; border: 6px solid %1; }").arg(player->color().name());
-    }
+    QString const backgroundColor = player->isActive() ? player->color().name() : "transparent";
+    QString const borderColor = isFailer ? "transparent" : player->color().name();
+
+    boxStyleSheet = QString("QFrame { background-color: %1; border: 6px solid %2; }").arg(backgroundColor, borderColor);
     box.frame->setStyleSheet(boxStyleSheet);
     box.nameLabel->setText("<b>" + player->name() + "</b>");
-    box.nameLabel->setStyleSheet("QFrame {border: 0px; background-color: transparent;}");
+    box.nameLabel->setStyleSheet(QString("QFrame {border: 0px; background-color: %1;}").arg(backgroundColor));
     box.pointsLabel->setText(QString::number(player->points()));
-    box.pointsLabel->setStyleSheet("QFrame {border: 0px; background-color: transparent;}");
+    box.pointsLabel->setStyleSheet(QString("QFrame {border: 0px; background-color: %1;}").arg(backgroundColor));
 }

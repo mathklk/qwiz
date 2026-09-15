@@ -15,8 +15,6 @@ public:
     QString title() const { return _title; }
     int maxNumberOfQuestionsPerCategory() const;
     Question* at(int ci, int qi);
-    //Question* at(QPair<int, int> const& ciqi);
-    Question* activeQuestion();
 
 private:
     QString _title;

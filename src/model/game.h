@@ -1,11 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <QObject>
-#include <QRandomGenerator>
-
 #include "player.h"
 #include "board.h"
+
+#include <QObject>
+#include <QRandomGenerator>
+#include <QSoundEffect>
 
 class Game : public QObject
 {
@@ -16,14 +17,19 @@ public:
     enum class State {
         idle,
         activeQuestion,
+        judging,
+        answered,
+        finished
     };
 
     struct Rules {
         enum class NextPlayerPolicy {
             random,
-            cyclic
+            cyclic,
+            winner,
+            underdog
         } nextPlayerPolicy = NextPlayerPolicy::random;
-        float wrongAnswerPointDeductionRatio = 0.5f;
+        float wrongAnswerPointDeductionRatio = 0.0f;
     };
 
 public:
@@ -33,18 +39,24 @@ public:
     QList<Player*> players() const { return _players; }
     Board const& board() const { return _board; }
     Board& board() { return _board; }
+    Question* activeQuestion() { return _activeQuestion; }
     Rules rules() const { return _rules; }
     void setRules(Rules const& rules) { _rules = rules; }
 
 public slots:
     void start(Board const&);
-    void buzz(int);
     void activateQuestion(int categoryIndex, int questionIndex);
+    void buzz(int);
+    void judgeCorrect();
+    void judgeWrong();
+    void judgePass();
+    void proceed();
 
 signals:
     void changed();
 
 private:
+    Player* activePlayer() const;
     Player* nextPlayer() const;
 
 private:
@@ -52,7 +64,12 @@ private:
     Rules _rules;
     QList<Player*> _players;
     Board _board;
+    Category* _activeCategory = nullptr;
+    Question* _activeQuestion = nullptr;
+    mutable int _chooserIndex = 0;
     mutable QRandomGenerator _random;
+
+    QSoundEffect _buzzerEffect;
 };
 
 #endif // GAME_H

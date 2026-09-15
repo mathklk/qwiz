@@ -35,7 +35,8 @@ protected:
 private:
     void newGameClicked();
     void playerChanged(int);
-    void updateBoard(Board const&);
+    void updateBoard();
+    void updateQuestion();
 
 private:
     Ui::ModeratorWindow* ui;

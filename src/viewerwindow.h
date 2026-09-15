@@ -56,7 +56,7 @@ private:
         QLabel* pointsLabel;
     };
     QList<PlayerBox> _playerBoxes;
-    bool _alwaysShowCategories = true;
+    bool _alwaysShowCategories = false;
 };
 
 #endif // VIEWERWINDOW_H

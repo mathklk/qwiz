@@ -1,9 +1,9 @@
 #include "Question.h"
 
-Question::Question(QString const& text, QString const& solution, int const points)
-    : _text(text)
-    , _solution(solution)
-    , _points(points)
+Question::Question(QString const& text, QString const& solution, int const points):
+    _text(text),
+    _solution(solution),
+    _points(points)
 {}
 
 void Question::activate() {
@@ -13,12 +13,10 @@ void Question::activate() {
     _state = State::active;
 }
 
-void Question::finish(QString player, bool solved) {
+void Question::finish(Player *const player) {
     if (_state != State::active) {
         return;
     }
-    if (solved) {
-        _solver = player;
-    }
-    _state = solved ? State::solved : State::unsolved;
+    _solver = player;
+    _state = State::finished;
 }
