@@ -107,9 +107,17 @@ void Game::proceed() {
     }
 
     if (gameIsFinished) {
+        float maxPoints = -INFINITY;
         for (auto player : _players) {
             player->setIsActive(false);
             player->setHasAttempted(false);
+            maxPoints = qMax(maxPoints, float(player->points()));
+        }
+        // Mark winners active
+        for (auto player : _players) {
+            if (player->points() >= maxPoints) {
+                player->setIsActive(true);
+            }
         }
         _activeQuestion = nullptr;
         _state = State::finished;

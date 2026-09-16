@@ -40,6 +40,7 @@ public:
     Board const& board() const { return _board; }
     Board& board() { return _board; }
     Question* activeQuestion() { return _activeQuestion; }
+    Category* activeCategory() { return _activeCategory; }
     Rules rules() const { return _rules; }
     void setRules(Rules const& rules) { _rules = rules; }
 

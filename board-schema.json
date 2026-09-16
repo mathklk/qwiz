@@ -6,16 +6,21 @@
         "Question": {
             "type": "object",
             "properties": {
+                "type": {
+                    "description": "The type of the question. If not specified, `normal` is assumed.",
+                    "type": "string",
+                    "enum": ["normal", "numeric"]
+                },
                 "text": {
                     "description": "The sentence that is shown when this question is selected.",
                     "type": "string"
                 },
-                "solution": {
-                    "description": "The solution to the question. This is only for the moderator and not shown to the players.",
-                    "type": "string"
-                },
                 "image": {
                     "description": "Optional image that is shown next to `text`. Either a relative file path or `b64:` followed by base64 data",
+                    "type": "string"
+                },
+                "solution": {
+                    "description": "The solution to the question. This is only for the moderator and not shown to the players.",
                     "type": "string"
                 },
                 "solutionImage": {

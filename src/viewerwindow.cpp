@@ -1,6 +1,8 @@
 #include "viewerwindow.h"
 #include "ui_viewerwindow.h"
 
+#include "widgets/imagelabel.h"
+
 ViewerWindow::ViewerWindow(Game* game, QWidget *parent):
     QWidget(parent),
     ui(new Ui::ViewerWindow),
@@ -94,14 +96,30 @@ void ViewerWindow::updateGame() {
     }
     if (state == Game::State::activeQuestion or state == Game::State::judging or state == Game::State::answered) {
         Question const*const activeQuestion = _game->activeQuestion();
-        QLabel *const questionLabel = new QLabel(activeQuestion ? "<h1>" + activeQuestion->text() + "</h1>" : "");
-        questionLabel->setAlignment(Qt::AlignCenter);
-        questionLabel->setWordWrap(true);
+
+        QWidget *const questionLayoutWidget = new QWidget;
+        QHBoxLayout *const questionLayout = new QHBoxLayout;
+        questionLayoutWidget->setLayout(questionLayout);
+
+        if (not activeQuestion->text().isEmpty()) {
+            QLabel *const questionLabel = new QLabel(activeQuestion ? "<h1>" + activeQuestion->text() + "</h1>" : "");
+            questionLabel->setAlignment(Qt::AlignCenter);
+            questionLabel->setWordWrap(true);
+            questionLayout->addWidget(questionLabel, 1);
+        }
+        if (activeQuestion->hasImage()) {
+            ImageLabel *const imageLabel = new ImageLabel(QPixmap::fromImage(activeQuestion->image()));
+            questionLayout->addWidget(imageLabel, 1);
+        }
+        if (activeQuestion->hasSolutionImage() and state == Game::State::answered) {
+            ImageLabel *const solutionImageLabel = new ImageLabel(QPixmap::fromImage(activeQuestion->solutionImage()));
+            questionLayout->addWidget(solutionImageLabel, 1);
+        }
         if (_alwaysShowCategories) {
-            rasterLayout->addWidget(questionLabel, 1, 0, board.maxNumberOfQuestionsPerCategory(), board.count());
+            rasterLayout->addWidget(questionLayoutWidget, 1, 0, board.maxNumberOfQuestionsPerCategory(), board.count());
             rasterLayout->setRowStretch(1, 1);
         } else {
-            rasterLayout->addWidget(questionLabel, 0, 0);
+            rasterLayout->addWidget(questionLayoutWidget, 0, 0);
             rasterLayout->setRowStretch(0, 1);
         }
     }

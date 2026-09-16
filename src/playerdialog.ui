@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
-    <height>114</height>
+    <width>590</width>
+    <height>171</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,13 +26,30 @@
       <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEdit_1"/>
+      </item>
       <item row="1" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label_1">
         <property name="text">
          <string>TextLabel</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButtonActive_1">
+        <property name="text">
+         <string>Make Active</string>
         </property>
        </widget>
       </item>
@@ -61,13 +78,20 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="lineEdit_1"/>
+      <item row="4" column="0" colspan="2">
+       <widget class="Line" name="line_5">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
       </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButtonActive_1">
-        <property name="text">
-         <string>Make Active</string>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLineEdit" name="lineEditPoints_1">
+        <property name="toolTip">
+         <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
+        </property>
+        <property name="placeholderText">
+         <string>Add or Take Points</string>
         </property>
        </widget>
       </item>
@@ -83,6 +107,23 @@
       <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <item row="4" column="0" colspan="2">
+       <widget class="Line" name="line_6">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="buttonPickColor_2">
         <property name="sizePolicy">
@@ -109,22 +150,29 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLineEdit" name="lineEdit_2"/>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="5" column="0" colspan="2">
        <widget class="QPushButton" name="pushButtonActive_2">
         <property name="text">
          <string>Make Active</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLineEdit" name="lineEditPoints_2">
+        <property name="toolTip">
+         <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
+        </property>
+        <property name="placeholderText">
+         <string>Add or Take Points</string>
         </property>
        </widget>
       </item>
@@ -140,7 +188,10 @@
       <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0" colspan="2">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEdit_3"/>
+      </item>
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>TextLabel</string>
@@ -175,13 +226,34 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="lineEdit_3"/>
+      <item row="1" column="0" colspan="2">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="4" column="0" colspan="2">
+       <widget class="Line" name="line_7">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
        <widget class="QPushButton" name="pushButtonActive_3">
         <property name="text">
          <string>Make Active</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLineEdit" name="lineEditPoints_3">
+        <property name="toolTip">
+         <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
+        </property>
+        <property name="placeholderText">
+         <string>Add or Take Points</string>
         </property>
        </widget>
       </item>
@@ -197,8 +269,12 @@
       <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="lineEdit_4"/>
+      <item row="4" column="0" colspan="2">
+       <widget class="Line" name="line_8">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
       </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="buttonPickColor_4">
@@ -225,7 +301,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>TextLabel</string>
@@ -235,10 +311,30 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="1" column="0" colspan="2">
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEdit_4"/>
+      </item>
+      <item row="5" column="0" colspan="2">
        <widget class="QPushButton" name="pushButtonActive_4">
         <property name="text">
          <string>Make Active</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLineEdit" name="lineEditPoints_4">
+        <property name="toolTip">
+         <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
+        </property>
+        <property name="placeholderText">
+         <string>Add or Take Points</string>
         </property>
        </widget>
       </item>

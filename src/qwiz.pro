@@ -10,7 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     buzzer/keyboardbuzzer.cpp \
-    filedialog/rememberingfiledialog.cpp \
+    widgets/rememberingfiledialog.cpp \
     model/board.cpp \
     model/category.cpp \
     model/game.cpp \
@@ -20,12 +20,13 @@ SOURCES += \
     model/question.cpp \
     moderatorwindow.cpp \
     playerdialog.cpp \
-    viewerwindow.cpp
+    viewerwindow.cpp \
+    widgets/imagelabel.cpp
 
 HEADERS += \
     buzzer/buzzerbase.h \
     buzzer/keyboardbuzzer.h \
-    filedialog/rememberingfiledialog.h \
+    widgets/rememberingfiledialog.h \
     model/board.h \
     model/category.h \
     model/game.h \
@@ -34,7 +35,8 @@ HEADERS += \
     model/question.h \
     moderatorwindow.h \
     playerdialog.h \
-    viewerwindow.h
+    viewerwindow.h \
+    widgets/imagelabel.h
 
 FORMS += \
     moderatorwindow.ui \

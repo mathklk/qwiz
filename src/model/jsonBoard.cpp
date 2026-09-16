@@ -26,6 +26,10 @@ QImage loadImage(QString const& str, QDir const& dir) {
 }
 
 Board fromJson(QJsonObject const& root, QDir const& dir) {
+    int version = 1;
+    if (root.contains("version")) {
+        version = root["version"].toInt();
+    }
     int const mult = root["mult"].toInt();
     QList<Category> categories;
     for (QJsonValue const& cVal : root["categories"].toArray()) {
@@ -35,6 +39,17 @@ Board fromJson(QJsonObject const& root, QDir const& dir) {
         for (QJsonValue const& qVal : c["questions"].toArray()) {
             QJsonObject const& q = qVal.toObject();
             Question question(q["text"].toString(), q["solution"].toString(), i++*mult);
+            if (version >= 2 and q.contains("type")) {
+                QMap<QString, Question::Type> const typeMap = {
+                    { "normal",  Question::Type::normal  },
+                    { "numeric", Question::Type::numeric }
+                };
+                Question::Type type = typeMap.value(q["type"].toString(), Question::Type::invalid);
+                if (type == Question::Type::invalid) {
+                    throw JsonBoard::JsonException("Invalid question type: \"" + q["type"].toString() + "\" possible values are: " + typeMap.keys().join(", "));
+                }
+                question.setType(type);
+            }
             if (q.contains("image")) {
                 question.setImage(loadImage(q["image"].toString(), dir));
             }

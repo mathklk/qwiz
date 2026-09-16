@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>671</height>
+    <width>826</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -281,7 +281,7 @@
       <property name="frameShadow">
        <enum>QFrame::Shadow::Sunken</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0">
+      <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0">
        <property name="leftMargin">
         <number>8</number>
        </property>
@@ -298,6 +298,25 @@
         <number>10</number>
        </property>
        <item row="1" column="1">
+        <widget class="QLabel" name="labelQuestion">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Question</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
         <widget class="QLabel" name="labelSolution">
          <property name="enabled">
           <bool>false</bool>
@@ -320,21 +339,15 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLabel" name="labelQuestion">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QLabel" name="labelCategory">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
          <property name="text">
-          <string>Question</string>
+          <string>Category</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -348,7 +361,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>824</width>
+     <width>826</width>
      <height>21</height>
     </rect>
    </property>

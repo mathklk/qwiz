@@ -1,7 +1,7 @@
 #include "moderatorwindow.h"
 #include "ui_moderatorwindow.h"
 
-#include "filedialog/rememberingfiledialog.h"
+#include "widgets/rememberingfiledialog.h"
 #include "model/jsonBoard.h"
 
 #include <QMessageBox>
@@ -115,7 +115,8 @@ void ModeratorWindow::newGameClicked() {
         _game->start(board);
         setWindowTitle("qwiz | " + board.title());
     } catch (JsonBoard::JsonException const& jsonException) {
-        QMessageBox::critical(this, "File Error", jsonException.detail());
+        QString const fileName = QFileInfo(filePath).fileName();
+        QMessageBox::critical(this, "Error reading " + fileName, jsonException.detail());
     }
 }
 
@@ -177,6 +178,15 @@ void ModeratorWindow::updateBoard() {
                 cellWidget = cellLabel;
             }
             if (cellWidget != nullptr) {
+                QString qText = question.text();
+                if (question.hasImage()) {
+                    qText = "[Image]\n" + qText;
+                }
+                QString qSolution = question.solution();
+                if (question.hasSolutionImage()) {
+                    qSolution = "[Solution Image]\n" + qSolution;
+                }
+                cellWidget->setToolTip(QString("%1\n---\n%2\n---\n%3").arg(question.points()).arg(qText, qSolution));
                 ui->raster->setCellWidget(1 + iQuestion, iCategory, cellWidget);
             }
         }
@@ -184,6 +194,7 @@ void ModeratorWindow::updateBoard() {
 }
 
 void ModeratorWindow::updateQuestion() {
+    Category const*const category = _game->activeCategory();
     Question const*const question = _game->activeQuestion();
     auto const& state = _game->state();
 
@@ -198,18 +209,21 @@ void ModeratorWindow::updateQuestion() {
         }
         spacer->invalidate();
     }
+    if (not questionIsVisible) {
+        return;
+    }
+
     ui->buttonRight  ->setEnabled(state == Game::State::judging);
     ui->buttonWrong  ->setEnabled(state == Game::State::judging);
     ui->buttonPass   ->setEnabled(state == Game::State::judging);
     ui->buttonProceed->setEnabled(state == Game::State::answered);
     ui->buttonSkip   ->setEnabled(state == Game::State::activeQuestion);
 
-    if (question == nullptr) {
-        ui->labelQuestion->setText("");
-        ui->labelSolution->setText("");
-        return;
+    ui->labelCategory->setText("<h2>" + category->name() + "</h2>");
+    QString qText = question->text();
+    if (qText.isEmpty() and question->hasImage()) {
+        qText = "[Image]";
     }
-
-    ui->labelQuestion->setText("<h1>" + question->text() + "</h1>");
+    ui->labelQuestion->setText("<h1>" + qText + "</h1>");
     ui->labelSolution->setText("<h2>" + question->solution() + "</h2>");
 }

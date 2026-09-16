@@ -36,6 +36,7 @@ private:
         QLabel* labelPoints;
         QPushButton* buttonColor;
         QPushButton* buttonActive;
+        QLineEdit* lineEditPoints;
     };
     QList<PlayerBox> _playerBoxes;
 };
