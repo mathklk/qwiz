@@ -40,6 +40,7 @@ protected:
         QWidget::closeEvent(ev);
         emit closed();
     }
+    void changeEvent(QEvent*) override;
 
 private:
     QVBoxLayout* mainLayout() { return qobject_cast<QVBoxLayout*>(layout()); }

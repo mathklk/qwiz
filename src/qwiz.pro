@@ -2,7 +2,10 @@ QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17
+CONFIG += \
+    c++17 \
+    lrelease \
+    embed_translations
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -11,6 +14,7 @@ CONFIG += c++17
 SOURCES += \
     buzzer/keyboardbuzzer.cpp \
     widgets/rememberingfiledialog.cpp \
+    translation.cpp \
     model/board.cpp \
     model/category.cpp \
     model/game.cpp \
@@ -26,6 +30,7 @@ SOURCES += \
 HEADERS += \
     buzzer/buzzerbase.h \
     buzzer/keyboardbuzzer.h \
+    translation.h \
     widgets/rememberingfiledialog.h \
     model/board.h \
     model/category.h \
@@ -45,6 +50,9 @@ FORMS += \
 
 RESOURCES += \
     res.qrc
+
+TRANSLATIONS += \
+    ../rsrc/translation/qwiz_de.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

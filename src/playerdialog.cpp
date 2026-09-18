@@ -78,6 +78,13 @@ void PlayerDialog::triggerBuzzerVisualization(int iPlayer) {
     });
 }
 
+void PlayerDialog::changeEvent(QEvent* ev) {
+    QWidget::changeEvent(ev);
+    if (ev->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+    }
+}
+
 void PlayerDialog::setPlayerBoxBackgroundColor(int iPlayer, QColor const color) {
     _playerBoxes[iPlayer].frame->setStyleSheet(
         QString("QFrame { background-color: %1; }").arg(color.name())

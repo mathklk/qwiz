@@ -14,7 +14,7 @@ Game::Game():
         QColor(0x46, 0x86, 0x29)}
     ;
     for (int i = 0; i < nPlayers; ++i) {
-        _players.append(new Player("Player " + QString::number(i+1), defaultColors[i]));
+        _players.append(new Player(tr("Player %1").arg(i+1), defaultColors[i]));
     }
     _buzzerEffect.setSource(QUrl("qrc:/audio/buzzer.wav"));
 }
@@ -187,7 +187,7 @@ Player *Game::nextPlayer() const {
         }
         return underdogs.at(_random.bounded(underdogs.size()));
     } else {
-        qCritical() << "Unknown next player policy " << int(_rules.nextPlayerPolicy);
+        qCritical() << "Unknown next player policy" << int(_rules.nextPlayerPolicy);
         return nullptr;
     }
 }

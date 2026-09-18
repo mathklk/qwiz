@@ -22,6 +22,7 @@ public:
 
 signals:
     void closed();
+    void localeChanged();
     void signalIncreaseFont();
     void signalDecreaseFont();
     void signalAlwaysShowCategoriesChanged(bool);
@@ -31,6 +32,7 @@ protected:
         QMainWindow::closeEvent(ev);
         emit closed();
     }
+    void changeEvent(QEvent*) override;
 
 private:
     void newGameClicked();

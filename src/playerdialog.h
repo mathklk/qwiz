@@ -23,6 +23,9 @@ public:
 public slots:
     void triggerBuzzerVisualization(int);
 
+protected:
+    void changeEvent(QEvent*) override;
+
 private:
     void setPlayerBoxBackgroundColor(int, QColor const);
 

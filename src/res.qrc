@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>audio/buzzer.wav</file>
+        <file alias="audio/buzzer.wav">../rsrc/audio/buzzer.wav</file>
+        <file alias="icon/globe.svg"  >../rsrc/icon/globe.svg</file>
     </qresource>
 </RCC>

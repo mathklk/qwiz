@@ -17,8 +17,7 @@ QString RememberingFileDialog::getOpenFileName(
     key.replace("/", "");
     key.replace("\\", "");
 
-    QSettings settings;
-    QString const dir = settings.value(key).toString();
+    QString const dir = QSettings().value(key).toString();
 
     QString const file = QFileDialog::getOpenFileName(
         parent,
@@ -32,6 +31,6 @@ QString RememberingFileDialog::getOpenFileName(
         return file;
     }
     QDir d;
-    settings.setValue(key, d.absoluteFilePath(file));
+    QSettings().setValue(key, d.absoluteFilePath(file));
     return file;
 }

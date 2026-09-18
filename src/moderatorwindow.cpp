@@ -3,9 +3,10 @@
 
 #include "widgets/rememberingfiledialog.h"
 #include "model/jsonBoard.h"
+#include "translation.h"
 
 #include <QMessageBox>
-//#include <QHBoxLayout>
+#include <QToolButton>
 #include <QActionGroup>
 
 ModeratorWindow::ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget* parent):
@@ -20,6 +21,29 @@ ModeratorWindow::ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget
     connect(ui->actionIncrease_Font_Size, &QAction::triggered, this, &ModeratorWindow::signalIncreaseFont);
     connect(ui->actionDecrease_Font_Size, &QAction::triggered, this, &ModeratorWindow::signalDecreaseFont);
     connect(ui->actionAlways_Show_Categories, &QAction::toggled, this, &ModeratorWindow::signalAlwaysShowCategoriesChanged);
+
+    auto langButton = new QPushButton();
+    langButton->setIcon(QIcon(":/icon/globe.svg"));
+    // langButton->setFlat(true);
+
+    auto langMenu = new QMenu(langButton);
+    auto langGroup = new QActionGroup(langMenu);
+    langGroup->setExclusive(true);
+    for (QString const& locale : Translation::availableLocales()) {
+        auto action = langMenu->addAction(Translation::localeNativeName(locale));
+        langGroup->addAction(action);
+        action->setCheckable(true);
+        if (QSettings().value("locale", Translation::SETTINGS_KEY_SYSTEM_LOCALE).toString() == locale) {
+            action->setChecked(true);
+        }
+        connect(action, &QAction::triggered, this, [this, locale](){
+            QSettings().setValue("locale", locale);
+            emit localeChanged();
+        });
+    }
+    langButton->setMenu(langMenu);
+    ui->menubar->setCornerWidget(langButton);
+
 
     // Rules Menus
     auto pointDeductionActionGroup = new QActionGroup(this);
@@ -97,6 +121,13 @@ ModeratorWindow::ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget
 
 ModeratorWindow::~ModeratorWindow() {
     delete ui;
+}
+
+void ModeratorWindow::changeEvent(QEvent* ev) {
+    QMainWindow::changeEvent(ev);
+    if (ev->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+    }
 }
 
 void ModeratorWindow::newGameClicked() {
@@ -222,7 +253,7 @@ void ModeratorWindow::updateQuestion() {
     ui->labelCategory->setText("<h2>" + category->name() + "</h2>");
     QString qText = question->text();
     if (qText.isEmpty() and question->hasImage()) {
-        qText = "[Image]";
+        qText = tr("[Image]");
     }
     ui->labelQuestion->setText("<h1>" + qText + "</h1>");
     ui->labelSolution->setText("<h2>" + question->solution() + "</h2>");

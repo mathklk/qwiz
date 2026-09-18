@@ -4,16 +4,21 @@
 
 #include "model/game.h"
 #include "buzzer/keyboardbuzzer.h"
+#include "translation.h"
 
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
     // For QSettings in RememberingFileDialog
     a.setApplicationName("qwiz");
     a.setOrganizationName("qwiz");
     a.setOrganizationDomain("qwiz");
+
+    QTranslator* t = Translation::buildTranslator();
+    a.installTranslator(t);
 
     Game game;
     PlayerDialog playerDialog(&game);
@@ -40,6 +45,12 @@ int main(int argc, char *argv[])
         viewerWindow.update();
     });
     QObject::connect(&moderatorWindow, &ModeratorWindow::signalAlwaysShowCategoriesChanged, &viewerWindow, &ViewerWindow::setAlwaysShowCategories);
+    QObject::connect(&moderatorWindow, &ModeratorWindow::localeChanged, [&a, &t](){
+        a.removeTranslator(t);
+        delete t;
+        t = Translation::buildTranslator();
+        a.installTranslator(t);
+    });
 
     QList<QWidget*> windowsThatListenToKeyboardBuzzers;
     windowsThatListenToKeyboardBuzzers<< &playerDialog;

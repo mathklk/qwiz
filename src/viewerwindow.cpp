@@ -31,6 +31,13 @@ ViewerWindow::~ViewerWindow()
     delete ui;
 }
 
+void ViewerWindow::changeEvent(QEvent* ev) {
+    QWidget::changeEvent(ev);
+    if (ev->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+    }
+}
+
 void ViewerWindow::updateGame() {
     setWindowTitle(_game->board().title());
 

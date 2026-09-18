@@ -6,6 +6,7 @@
 #include <QBuffer>
 #include <QImageReader>
 #include <QDir>
+#include <QObject>
 
 QImage imgFromB64(QString const& str) {
     QByteArray imgData = QByteArray::fromBase64(str.toUtf8());
@@ -46,7 +47,9 @@ Board fromJson(QJsonObject const& root, QDir const& dir) {
                 };
                 Question::Type type = typeMap.value(q["type"].toString(), Question::Type::invalid);
                 if (type == Question::Type::invalid) {
-                    throw JsonBoard::JsonException("Invalid question type: \"" + q["type"].toString() + "\" possible values are: " + typeMap.keys().join(", "));
+                    throw JsonBoard::JsonException(QObject::tr("Invalid question type \"%1\", possible values are: %2")
+                        .arg(q["type"].toString(), typeMap.keys().join(", "))
+                    );
                 }
                 question.setType(type);
             }
@@ -66,7 +69,7 @@ Board fromJson(QJsonObject const& root, QDir const& dir) {
 
 Board JsonBoard::fromJsonFile(QFile file) {
     if (!file.open(QIODevice::ReadOnly)) {
-        throw JsonException("File couldn't be opened for reading");
+        throw JsonException(QObject::tr("File \"%1\" couldn't be opened for reading").arg(file.fileName()));
     }
 
     QByteArray const data = file.readAll();
@@ -82,7 +85,9 @@ Board JsonBoard::fromJsonFile(QFile file) {
             }
             ++column;
         }
-        throw JsonException("JSON parse error: " + parseError.errorString() + " @ line " + QString::number(line) + ", column " + QString::number(column));
+        throw JsonException(QObject::tr("JSON parse error \"%1\" @ line %2, column %3")
+            .arg(parseError.errorString(), QString::number(line), QString::number(column))
+        );
     }
 
     // Json can contain paths relative to json itself
