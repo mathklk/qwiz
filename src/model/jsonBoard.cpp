@@ -22,7 +22,11 @@ QImage loadImage(QString const& str, QDir const& dir) {
         return imgFromB64(str.sliced(4));
     } else {
         // str contains a filepath relative to dir
-        return QImage(dir.absoluteFilePath(str));
+        QImage img(dir.absoluteFilePath(str));
+        if (img.isNull()) {
+            qCritical() << "Could not load image" << dir.absoluteFilePath(str);
+        }
+        return img;
     }
 }
 
@@ -42,8 +46,8 @@ Board fromJson(QJsonObject const& root, QDir const& dir) {
             Question question(q["text"].toString(), q["solution"].toString(), i++*mult);
             if (version >= 2 and q.contains("type")) {
                 QMap<QString, Question::Type> const typeMap = {
-                    { "normal",  Question::Type::normal  },
-                    { "numeric", Question::Type::numeric }
+                    { "normal",  Question::Type::normal    },
+                    { "estimate", Question::Type::estimate }
                 };
                 Question::Type type = typeMap.value(q["type"].toString(), Question::Type::invalid);
                 if (type == Question::Type::invalid) {

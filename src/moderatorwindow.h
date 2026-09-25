@@ -3,6 +3,7 @@
 
 #include "model/game.h"
 #include "playerdialog.h"
+#include "widgets/widgetlist.h"
 
 #include <QMainWindow>
 
@@ -45,7 +46,9 @@ private:
     PlayerDialog* _playerDialog;
     Game* _game;
 
-    QList<QLabel*> _statusBarLabels;
+    WidgetList<QLabel> _statusBarLabels;
+    WidgetList<QPushButton> _judgeButtons;
+    WidgetList<QPushButton> _estimationWinnerButtons;
 
 };
 #endif // MODERATORWINDOW_H

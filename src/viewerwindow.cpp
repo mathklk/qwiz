@@ -2,6 +2,7 @@
 #include "ui_viewerwindow.h"
 
 #include "widgets/imagelabel.h"
+#include "color.h"
 
 ViewerWindow::ViewerWindow(Game* game, QWidget *parent):
     QWidget(parent),
@@ -59,12 +60,12 @@ void ViewerWindow::updateGame() {
     }
     QGridLayout* rasterLayout = new QGridLayout;
     ui->raster->setLayout(rasterLayout);
-    // Reset Layout size
 
     Board const& board = _game->board();
     Game::State const& state = _game->state();
-    if (state == Game::State::idle or state == Game::State::finished or _alwaysShowCategories) {
+    if (_alwaysShowCategories or state & (Game::State::idle | Game::State::finished)) {
         // Draw Board
+
         if (board.empty()) {
             rasterLayout->addWidget(new QLabel());
         }
@@ -92,8 +93,14 @@ void ViewerWindow::updateGame() {
                     questionLabel->setText("");
                 }
                 rasterLayout->addWidget(questionLabel, 1 + iRow, iColumn);
-                if (state == Game::State::finished and question.solver() != nullptr) {
-                    questionLabel->setStyleSheet(QString("QLabel { background-color: %1; }").arg(question.solver()->color().name()));
+                if (state == Game::State::finished and not question.solvers().isEmpty()) {
+                    QList<QColor> solverColors;
+                    for (auto const& player : question.solvers()) {
+                        solverColors.append(player->color());
+                    }
+                    questionLabel->setStyleSheet(QString("QLabel { background-color: %1; }").arg(
+                        Color::mix(solverColors).name()
+                    ));
                 }
             }
         }
@@ -101,15 +108,22 @@ void ViewerWindow::updateGame() {
             rasterLayout->setRowStretch(iRow, 1);
         }
     }
-    if (state == Game::State::activeQuestion or state == Game::State::judging or state == Game::State::answered) {
+    if (state & (Game::State::waitForBuzz | Game::State::judging | Game::State::estimation | Game::State::answered)) {
+        // Draw question
         Question const*const activeQuestion = _game->activeQuestion();
-
         QWidget *const questionLayoutWidget = new QWidget;
         QHBoxLayout *const questionLayout = new QHBoxLayout;
         questionLayoutWidget->setLayout(questionLayout);
 
         if (not activeQuestion->text().isEmpty()) {
-            QLabel *const questionLabel = new QLabel(activeQuestion ? "<h1>" + activeQuestion->text() + "</h1>" : "");
+            static QMap<Question::Type, QString> questionTypeRepresentation = {
+                {Question::Type::normal,   ""},
+                {Question::Type::estimate, "<h2>📝 " + tr("Estimate") + "</h2>"}
+            };
+            QLabel *const questionLabel = new QLabel(QString("%1<h1>%2</h1>")
+                .arg(questionTypeRepresentation[activeQuestion->type()])
+                .arg(activeQuestion->text())
+            );
             questionLabel->setAlignment(Qt::AlignCenter);
             questionLabel->setWordWrap(true);
             questionLayout->addWidget(questionLabel, 1);

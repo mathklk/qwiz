@@ -9,7 +9,7 @@
                 "type": {
                     "description": "The type of the question. If not specified, `normal` is assumed.",
                     "type": "string",
-                    "enum": ["normal", "numeric"]
+                    "enum": ["normal", "estimate"]
                 },
                 "text": {
                     "description": "The sentence that is shown when this question is selected.",

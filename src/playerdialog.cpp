@@ -62,7 +62,7 @@ PlayerDialog::PlayerDialog(Game* game, QWidget *parent):
             QString const input = _playerBoxes[i].lineEditPoints->text();
             _playerBoxes[i].lineEditPoints->clear();
             signed int const points = input.toInt();
-            player->setPoints(player->points() + points);
+            player->addPoints(points);
         });
     }
 }

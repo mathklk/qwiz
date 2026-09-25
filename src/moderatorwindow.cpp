@@ -4,6 +4,7 @@
 #include "widgets/rememberingfiledialog.h"
 #include "model/jsonBoard.h"
 #include "translation.h"
+#include "color.h"
 
 #include <QMessageBox>
 #include <QToolButton>
@@ -22,18 +23,31 @@ ModeratorWindow::ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget
     connect(ui->actionDecrease_Font_Size, &QAction::triggered, this, &ModeratorWindow::signalDecreaseFont);
     connect(ui->actionAlways_Show_Categories, &QAction::toggled, this, &ModeratorWindow::signalAlwaysShowCategoriesChanged);
 
-    auto langButton = new QPushButton();
-    langButton->setIcon(QIcon(":/icon/globe.svg"));
-    // langButton->setFlat(true);
-
-    auto langMenu = new QMenu(langButton);
-    auto langGroup = new QActionGroup(langMenu);
-    langGroup->setExclusive(true);
+    // Locale Menu
+    auto localeButton = new QPushButton();
+    localeButton->setIcon(QIcon(":/icon/globe.svg"));
+    localeButton->setFlat(true);
+    auto localeMenu = new QMenu(localeButton);
+    auto localeActionGroup = new QActionGroup(localeMenu);
+    localeActionGroup->setExclusive(true);
+    auto actionSystemLocale = localeMenu->addAction(tr("System language"));
+    actionSystemLocale->setCheckable(true);
+    if (QSettings().value("locale", Translation::SETTINGS_KEY_SYSTEM_LOCALE).toString() == Translation::SETTINGS_KEY_SYSTEM_LOCALE) {
+        actionSystemLocale->setChecked(true);
+    }
+    connect(actionSystemLocale, &QAction::triggered, this, [this](){
+        QSettings().setValue("locale", Translation::SETTINGS_KEY_SYSTEM_LOCALE);
+        emit localeChanged();
+    });
+    localeActionGroup->addAction(actionSystemLocale);
+    localeMenu->addSeparator();
     for (QString const& locale : Translation::availableLocales()) {
-        auto action = langMenu->addAction(Translation::localeNativeName(locale));
-        langGroup->addAction(action);
+        auto action = localeMenu->addAction(
+            QLocale::languageToString(QLocale(locale).language())
+        );
+        localeActionGroup->addAction(action);
         action->setCheckable(true);
-        if (QSettings().value("locale", Translation::SETTINGS_KEY_SYSTEM_LOCALE).toString() == locale) {
+        if (QSettings().value("locale").toString() == locale) {
             action->setChecked(true);
         }
         connect(action, &QAction::triggered, this, [this, locale](){
@@ -41,8 +55,8 @@ ModeratorWindow::ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget
             emit localeChanged();
         });
     }
-    langButton->setMenu(langMenu);
-    ui->menubar->setCornerWidget(langButton);
+    localeButton->setMenu(localeMenu);
+    ui->menubar->setCornerWidget(localeButton);
 
 
     // Rules Menus
@@ -85,18 +99,43 @@ ModeratorWindow::ModeratorWindow(Game* game, PlayerDialog* playerDialog, QWidget
         });
     }
 
-    // Judge Buttons
+    // Question Control Buttons
+    _judgeButtons = {ui->buttonRight, ui->buttonWrong, ui->buttonPass};
+    _estimationWinnerButtons = {ui->pushButtonP1, ui->pushButtonP2, ui->pushButtonP3, ui->pushButtonP4};
     connect(ui->buttonRight,   &QPushButton::clicked, _game, &Game::judgeCorrect  );
     connect(ui->buttonWrong,   &QPushButton::clicked, _game, &Game::judgeWrong    );
     connect(ui->buttonPass,    &QPushButton::clicked, _game, &Game::judgePass     );
-    connect(ui->buttonProceed, &QPushButton::clicked, _game, &Game::proceed       );
     connect(ui->buttonSkip,    &QPushButton::clicked, _game, &Game::proceed       );
+    connect(ui->buttonProceed, &QPushButton::clicked, this, [this](){
+        if (_game->state() == Game::State::estimation) {
+            // Reset player buttons for next question and collect estimation winner
+            QList<int> winners;
+            for (int i = 0; i < Game::nPlayers; ++i) {
+                if (_estimationWinnerButtons[i]->isChecked()) {
+                    winners.append(i);
+                }
+                _estimationWinnerButtons[i]->setChecked(false);
+            }
+            _game->chooseEsimationWinners(winners);
+        }
+        // Proceed, for either question type
+        _game->proceed();
+    });
+    for (QPushButton *const estimationButton : _estimationWinnerButtons) {
+        connect(estimationButton, &QPushButton::clicked, this, [this](){
+            bool atLeastOneWinnerButtonIsChecked = false;
+            for (QPushButton *const button : _estimationWinnerButtons) {
+                atLeastOneWinnerButtonIsChecked |= button->isChecked();
+            }
+            ui->buttonProceed->setEnabled(atLeastOneWinnerButtonIsChecked);
+        });
+    }
 
     // Player Info in Status Bar
     ui->statusbar->setContentsMargins(0, 0, 0, 0);
     _statusBarLabels = {new QLabel(), new QLabel(), new QLabel(), new QLabel()};
+    _statusBarLabels.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     for (auto label : _statusBarLabels) {
-        label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         ui->statusbar->addWidget(label, 1);
     }
     for (int i = 0; i < Game::nPlayers; ++i) {
@@ -153,23 +192,38 @@ void ModeratorWindow::newGameClicked() {
 
 void ModeratorWindow::playerChanged(int const i) {
     Player const*const player = _game->players().at(i);
-    QLabel *const label = _statusBarLabels[i];
-    label->setText(QString("<b>%1</b> : %2").arg(player->name()).arg(player->points()));
 
+    // Status Bar Label
+    QLabel *const statusBarLabel = _statusBarLabels[i];
+    statusBarLabel->setText(QString("<b>%1</b> : %2").arg(player->name()).arg(player->points()));
     bool const isFailer = _game->activeQuestion() != nullptr and _game->activeQuestion()->failers().contains(player);
     QString const backgroundColor = player->isActive() ? player->color().name() : "transparent";
     QString const borderColor = isFailer ? "transparent" : player->color().name();
-    label->setStyleSheet(
+    statusBarLabel->setStyleSheet(
         QString("QFrame { padding: 2px; background-color: %1; border: 6px solid %2; }")
         .arg(backgroundColor)
         .arg(borderColor)
     );
+
+    // EstimationButtons
+    QPushButton *const estimationButton = _estimationWinnerButtons[i];
+    estimationButton->setText(player->name());
 }
 
 void ModeratorWindow::updateBoard() {
     auto const& board = _game->board();
     Game::State const& state = _game->state();
     ui->groupBoxBoard->setVisible(state == Game::State::idle or state == Game::State::finished);
+
+    int nEstimationQuestions = 0;
+    for (Category const& category : board) {
+        for (Question const& question : category) {
+            nEstimationQuestions += question.state() == Question::State::hidden and question.type() == Question::Type::estimate;
+        }
+    }
+    if (nEstimationQuestions > 0) {
+        ui->groupBoxBoard->setTitle(tr("%1 estimation questions remaining").arg(nEstimationQuestions));
+    }
 
     ui->raster->clear();
     ui->raster->setColumnCount(board.count());
@@ -202,8 +256,14 @@ void ModeratorWindow::updateBoard() {
                 cellLabel->setAlignment(Qt::AlignCenter);
                 if (state == Game::State::finished) {
                     cellLabel->setText(QString::number(question.points()));
-                    if (question.solver() != nullptr) {
-                        cellLabel->setStyleSheet(QString("QLabel { background-color: %1; }").arg(question.solver()->color().name()));
+                    if (not question.solvers().isEmpty()) {
+                        QList<QColor> solverColors;
+                        for (auto const& player : question.solvers()) {
+                            solverColors.append(player->color());
+                        }
+                        cellLabel->setStyleSheet(QString("QLabel { background-color: %1; }").arg(
+                            Color::mix(solverColors).name()
+                        ));
                     }
                 }
                 cellWidget = cellLabel;
@@ -211,7 +271,7 @@ void ModeratorWindow::updateBoard() {
             if (cellWidget != nullptr) {
                 QString qText = question.text();
                 if (question.hasImage()) {
-                    qText = "[Image]\n" + qText;
+                    qText = "[" + tr("Image") + "]\n" + qText;
                 }
                 QString qSolution = question.solution();
                 if (question.hasSolutionImage()) {
@@ -229,7 +289,12 @@ void ModeratorWindow::updateQuestion() {
     Question const*const question = _game->activeQuestion();
     auto const& state = _game->state();
 
-    bool const questionIsVisible = state == Game::State::activeQuestion or state == Game::State::judging or state == Game::State::answered;
+    bool const questionIsVisible = state & (
+        Game::State::waitForBuzz |
+        Game::State::judging     |
+        Game::State::answered    |
+        Game::State::estimation
+    );
     ui->frameQuestion->setVisible(questionIsVisible);
     ui->frameJudge   ->setVisible(questionIsVisible);
     for (QSpacerItem *const spacer : {ui->questionSpacerTop, ui->questionSpacerBottom}) {
@@ -244,16 +309,17 @@ void ModeratorWindow::updateQuestion() {
         return;
     }
 
-    ui->buttonRight  ->setEnabled(state == Game::State::judging);
-    ui->buttonWrong  ->setEnabled(state == Game::State::judging);
-    ui->buttonPass   ->setEnabled(state == Game::State::judging);
-    ui->buttonProceed->setEnabled(state == Game::State::answered);
-    ui->buttonSkip   ->setEnabled(state == Game::State::activeQuestion);
+    _judgeButtons           .setVisible(question->type() == Question::Type::normal  );
+    _estimationWinnerButtons.setVisible(question->type() == Question::Type::estimate);
+    _judgeButtons           .setEnabled(state == Game::State::judging    );
+    _estimationWinnerButtons.setEnabled(state == Game::State::estimation);
+    ui->buttonProceed->setEnabled(state & (Game::State::answered    | Game::State::estimation));
+    ui->buttonSkip   ->setEnabled(state & (Game::State::waitForBuzz | Game::State::estimation));
 
     ui->labelCategory->setText("<h2>" + category->name() + "</h2>");
     QString qText = question->text();
     if (qText.isEmpty() and question->hasImage()) {
-        qText = tr("[Image]");
+        qText = "[" + tr("Image") + "]";
     }
     ui->labelQuestion->setText("<h1>" + qText + "</h1>");
     ui->labelSolution->setText("<h2>" + question->solution() + "</h2>");

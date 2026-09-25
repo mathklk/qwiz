@@ -13,10 +13,10 @@ void Question::activate() {
     _state = State::active;
 }
 
-void Question::finish(Player *const player) {
+void Question::finish(QList<Player*> solvers) {
     if (_state != State::active) {
         return;
     }
-    _solver = player;
+    _solvers = solvers;
     _state = State::finished;
 }

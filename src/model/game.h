@@ -15,11 +15,12 @@ public:
     static constexpr int nPlayers = 4;
 
     enum class State {
-        idle,
-        activeQuestion,
-        judging,
-        answered,
-        finished
+        idle        = 1 << 0,
+        waitForBuzz = 1 << 1,
+        judging     = 1 << 2,
+        estimation  = 1 << 3,
+        answered    = 1 << 4,
+        finished    = 1 << 5,
     };
 
     struct Rules {
@@ -48,10 +49,15 @@ public slots:
     void start(Board const&);
     void activateQuestion(int categoryIndex, int questionIndex);
     void buzz(int);
+    void proceed();
+
+    // Normal Question
     void judgeCorrect();
     void judgeWrong();
     void judgePass();
-    void proceed();
+
+    // Estimation Question
+    void chooseEsimationWinners(QList<int> const& winners);
 
 signals:
     void changed();
@@ -72,5 +78,14 @@ private:
 
     QSoundEffect _buzzerEffect;
 };
+
+
+inline Game::State operator|(Game::State a, Game::State b) {
+    return static_cast<Game::State>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline bool operator&(Game::State a, Game::State b) {
+    return (static_cast<int>(a) & static_cast<int>(b)) != 0;
+}
 
 #endif // GAME_H

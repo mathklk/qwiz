@@ -18,7 +18,8 @@ public:
     void setColor(QColor const color) { _color = color; emit changed(); }
 
     qint64 points() const { return _points; }
-    void setPoints(qint64 const points)  { _points = points; emit changed(); }
+    void setPoints(qint64 const points) { _points = points; emit changed(); }
+    void addPoints(qint64 const points) { _points += points; emit changed(); }
 
     bool isActive() const { return _isActive; }
     void setIsActive(bool const active) { _isActive = active; emit changed(); }

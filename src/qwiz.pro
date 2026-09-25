@@ -30,6 +30,7 @@ SOURCES += \
 HEADERS += \
     buzzer/buzzerbase.h \
     buzzer/keyboardbuzzer.h \
+    color.h \
     translation.h \
     widgets/rememberingfiledialog.h \
     model/board.h \
@@ -41,7 +42,8 @@ HEADERS += \
     moderatorwindow.h \
     playerdialog.h \
     viewerwindow.h \
-    widgets/imagelabel.h
+    widgets/imagelabel.h \
+    widgets/widgetlist.h
 
 FORMS += \
     moderatorwindow.ui \
@@ -53,6 +55,12 @@ RESOURCES += \
 
 TRANSLATIONS += \
     ../rsrc/translation/qwiz_de.ts
+
+lupdate_target.target = lupdate_run
+lupdate_target.commands = lupdate $$PWD/qwiz.pro
+lupdate_target.depends = FORCE
+PRE_TARGETDEPS += lupdate_run
+QMAKE_EXTRA_TARGETS += lupdate_target
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -23,7 +23,6 @@ QStringList Translation::availableLocales() {
     // iterate through i18n dir to determine available locales
     QDir const i18nDir(":/i18n");
     QStringList availableLocales = {
-        SETTINGS_KEY_SYSTEM_LOCALE, // option to use the system locale, i.e. dont specify an explicit locale
         "en", // English always available, it's the apps default language and doesnt have a translation file
     };
     for (QString const& fileName : i18nDir.entryList(QStringList("qwiz_*.qm"))) {
@@ -31,11 +30,4 @@ QStringList Translation::availableLocales() {
         availableLocales.append(locale);
     }
     return availableLocales;
-}
-
-QString Translation::localeNativeName(QString const& locale) {
-    if (locale == SETTINGS_KEY_SYSTEM_LOCALE) {
-        return QObject::tr("System");
-    }
-    return QLocale(locale).nativeLanguageName();
 }

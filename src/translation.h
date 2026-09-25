@@ -14,7 +14,6 @@ static QString const SETTINGS_KEY_SYSTEM_LOCALE = "system";
 bool load(QTranslator *const t, QString const& locale);
 QTranslator* buildTranslator();
 QStringList availableLocales();
-QString localeNativeName(QString const& locale);
 
 } // namespace Translation
 

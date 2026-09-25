@@ -91,7 +91,7 @@
          <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
         </property>
         <property name="placeholderText">
-         <string>Add or Take Points</string>
+         <string>+-Points</string>
         </property>
        </widget>
       </item>
@@ -172,7 +172,7 @@
          <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
         </property>
         <property name="placeholderText">
-         <string>Add or Take Points</string>
+         <string>+-Points</string>
         </property>
        </widget>
       </item>
@@ -253,7 +253,7 @@
          <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
         </property>
         <property name="placeholderText">
-         <string>Add or Take Points</string>
+         <string>+-Points</string>
         </property>
        </widget>
       </item>
@@ -334,7 +334,7 @@
          <string>Type commands like &quot;+500&quot; or &quot;-200&quot; and press Enter</string>
         </property>
         <property name="placeholderText">
-         <string>Add or Take Points</string>
+         <string>+-Points</string>
         </property>
        </widget>
       </item>
