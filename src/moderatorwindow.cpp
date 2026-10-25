@@ -321,6 +321,11 @@ void ModeratorWindow::updateQuestion() {
     if (qText.isEmpty() and question->hasImage()) {
         qText = "[" + tr("Image") + "]";
     }
-    ui->labelQuestion->setText("<h1>" + qText + "</h1>");
+    QStringList questionElements;
+    if (question->type() == Question::Type::estimate) {
+        questionElements.append("<h2>📝 " + tr("Estimate") + "</h2>");
+    }
+    questionElements.append("<h1>" + qText + "</h1>");
+    ui->labelQuestion->setText(questionElements.join(""));
     ui->labelSolution->setText("<h2>" + question->solution() + "</h2>");
 }

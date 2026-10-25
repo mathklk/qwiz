@@ -216,13 +216,18 @@
     <message>
         <location filename="../../src/moderatorwindow.cpp" line="225"/>
         <source>%1 estimation questions remaining</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Schätzfragen verbleibend</translation>
     </message>
     <message>
         <location filename="../../src/moderatorwindow.cpp" line="274"/>
         <location filename="../../src/moderatorwindow.cpp" line="322"/>
         <source>Image</source>
         <translation>Bild</translation>
+    </message>
+    <message>
+        <location filename="../../src/moderatorwindow.cpp" line="326"/>
+        <source>Estimate</source>
+        <translation type="unfinished">Schätzfrage</translation>
     </message>
     <message>
         <source>[Image]</source>
@@ -304,7 +309,7 @@
     <message>
         <location filename="../../src/viewerwindow.cpp" line="121"/>
         <source>Estimate</source>
-        <translation type="unfinished"></translation>
+        <translation>Schätzfrage</translation>
     </message>
 </context>
 </TS>
